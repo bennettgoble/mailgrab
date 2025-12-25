@@ -19,32 +19,33 @@ go build
 ## Usage
 
 ```bash
-mailgrab [options]
+Usage:
+  mailgrab [OPTIONS]
+
+Application Options:
+  -c, --config=      Path to config file [$MAILGRAB_CONFIG]
+  -s, --server=      IMAP server hostname [$MAILGRAB_SERVER]
+  -p, --port=        IMAP port (default: 993) [$MAILGRAB_PORT]
+  -u, --username=    IMAP username [$MAILGRAB_USERNAME]
+  -P, --password=    IMAP password [$MAILGRAB_PASSWORD]
+  -m, --mailbox=     Mailbox to check (default: Inbox) [$MAILGRAB_MAILBOX]
+  -o, --output=      Output directory for attachments [$MAILGRAB_OUTPUT]
+      --post-action= Action after processing: none, delete, move (default: none) [$MAILGRAB_POST_ACTION]
+      --move-to=     Target folder for move action [$MAILGRAB_MOVE_TO]
+      --insecure     Disable TLS verification [$MAILGRAB_INSECURE]
+  -v, --verbose      Enable verbose output [$MAILGRAB_VERBOSE]
+  -q, --quiet        Suppress non-error output [$MAILGRAB_QUIET]
+
+Help Options:
+  -h, --help         Show this help message
 ```
-
-### Options
-
-| Flag | Environment Variable | Description |
-|------|---------------------|-------------|
-| `-c, --config` | `MAILGRAB_CONFIG` | Path to config file |
-| `-s, --server` | `MAILGRAB_SERVER` | IMAP server hostname (required) |
-| `-p, --port` | `MAILGRAB_PORT` | IMAP port (default: 993) |
-| `-u, --username` | `MAILGRAB_USERNAME` | IMAP username (required) |
-| `-P, --password` | `MAILGRAB_PASSWORD` | IMAP password (required) |
-| `-m, --mailbox` | `MAILGRAB_MAILBOX` | Mailbox to check (default: INBOX) |
-| `-o, --output` | `MAILGRAB_OUTPUT` | Output directory for attachments (required) |
-| `--post-action` | `MAILGRAB_POST_ACTION` | Action after processing: `none`, `delete`, `move` |
-| `--move-to` | `MAILGRAB_MOVE_TO` | Target folder for move action |
-| `--insecure` | `MAILGRAB_INSECURE` | Disable TLS verification |
-| `-v, --verbose` | `MAILGRAB_VERBOSE` | Enable verbose output |
-| `-q, --quiet` | `MAILGRAB_QUIET` | Suppress non-error output |
 
 ### Configuration
 
 Configuration can be provided via:
-1. Command-line flags (highest priority)
+1. Command-line flags
 2. Environment variables
-3. Config file (lowest priority)
+3. Config file
 
 Config file locations (in order of precedence):
 1. Path specified via `--config`
