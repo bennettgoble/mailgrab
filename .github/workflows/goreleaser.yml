@@ -26,5 +26,5 @@ jobs:
       - name: Upload assets
         uses: actions/upload-artifact@v6
         with:
-          name: myapp
-          path: myfolder/dist/*
+          name: mailgrab-goreleaser
+          path: dist/*
