@@ -35,6 +35,7 @@ Application Options:
       --insecure     Disable TLS verification [$MAILGRAB_INSECURE]
   -v, --verbose      Enable verbose output [$MAILGRAB_VERBOSE]
   -q, --quiet        Suppress non-error output [$MAILGRAB_QUIET]
+  -j, --json-output  Path to JSON output file [$MAILGRAB_JSON_OUTPUT]
 
 Help Options:
   -h, --help         Show this help message
@@ -63,6 +64,7 @@ mailbox: INBOX
 output: /path/to/photos
 post_action: none
 # move_to: Archive  # required if post_action is "move"
+# json_output: /path/to/output.json  # optional JSON output file
 ```
 
 ### Examples
@@ -90,4 +92,37 @@ mailgrab --post-action delete --config mailgrab.yaml
 
 # Move emails to Archive folder after processing
 mailgrab --post-action move --move-to Archive --config mailgrab.yaml
+
+# Save JSON output with metadata about processed images
+mailgrab --config mailgrab.yaml --json-output results.json
 ```
+
+### JSON Output
+
+When using the `--json-output` flag, mailgrab will write a JSON file containing metadata about processed emails and saved images:
+
+```json
+[
+  {
+    "from": "sender@example.com",
+    "subject": "Vacation Photos",
+    "images": [
+      "IMG_1234.jpg",
+      "IMG_1235.jpg"
+    ]
+  },
+  {
+    "from": "another@example.com",
+    "subject": "Screenshots",
+    "images": [
+      "screenshot.png"
+    ]
+  }
+]
+```
+
+The JSON output:
+- Only includes messages where at least one image was successfully saved
+- Contains the sender email address, subject, and list of saved image filenames
+- Is written to the specified file path
+- Does not affect the normal console output

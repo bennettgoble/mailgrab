@@ -30,6 +30,7 @@ type IMAPClient interface {
 type Message struct {
 	UID         imap.UID
 	Subject     string
+	From        string
 	Attachments []Attachment
 }
 
@@ -113,6 +114,7 @@ func (m *MailClient) FetchNewMessages() ([]Message, error) {
 
 		var uid imap.UID
 		var subject string
+		var from string
 		var bodyStructure imap.BodyStructure
 
 		for {
@@ -125,6 +127,10 @@ func (m *MailClient) FetchNewMessages() ([]Message, error) {
 				uid = data.UID
 			case imapclient.FetchItemDataEnvelope:
 				subject = data.Envelope.Subject
+				if len(data.Envelope.From) > 0 {
+					addr := data.Envelope.From[0]
+					from = addr.Mailbox + "@" + addr.Host
+				}
 			case imapclient.FetchItemDataBodyStructure:
 				bodyStructure = data.BodyStructure
 			}
@@ -142,6 +148,7 @@ func (m *MailClient) FetchNewMessages() ([]Message, error) {
 		messages = append(messages, Message{
 			UID:         uid,
 			Subject:     subject,
+			From:        from,
 			Attachments: attachments,
 		})
 	}

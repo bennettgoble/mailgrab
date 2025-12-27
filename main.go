@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 )
@@ -11,6 +12,13 @@ const (
 	exitConnectError = 2
 	exitProcessError = 3
 )
+
+// JSONMessageOutput represents a message in JSON output
+type JSONMessageOutput struct {
+	From    string   `json:"from"`
+	Subject string   `json:"subject"`
+	Images  []string `json:"images"`
+}
 
 func main() {
 	os.Exit(run())
@@ -58,12 +66,14 @@ func run() int {
 	fileWriter := OSFileWriter{}
 	totalSaved := 0
 	outputDirCreated := false
+	var jsonOutput []JSONMessageOutput
 
 	for _, msg := range messages {
 		// Filter to only image attachments
 		images := FilterImageAttachments(msg.Attachments)
 
 		savedCount := 0
+		var savedFilenames []string
 		for _, att := range images {
 			// Create output directory on first image save
 			if !outputDirCreated {
@@ -81,6 +91,16 @@ func run() int {
 			}
 			verbose("  Saved: %s", path)
 			savedCount++
+			savedFilenames = append(savedFilenames, att.Filename)
+		}
+
+		// Add to JSON output if images were saved
+		if len(savedFilenames) > 0 {
+			jsonOutput = append(jsonOutput, JSONMessageOutput{
+				From:    msg.From,
+				Subject: msg.Subject,
+				Images:  savedFilenames,
+			})
 		}
 
 		if cfg.Verbose {
@@ -115,5 +135,27 @@ func run() int {
 		fmt.Printf("Processed %d message(s), saved %d image(s)\n", len(messages), totalSaved)
 	}
 
+	// Write JSON output if configured
+	if cfg.JSONOutput != "" && len(jsonOutput) > 0 {
+		if err := writeJSONOutput(cfg.JSONOutput, jsonOutput); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: writing JSON output: %v\n", err)
+			// Don't fail - JSON is supplementary
+		}
+	}
+
 	return exitOK
+}
+
+// writeJSONOutput writes processing results to a JSON file
+func writeJSONOutput(path string, data []JSONMessageOutput) error {
+	jsonData, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return fmt.Errorf("marshaling JSON: %w", err)
+	}
+
+	if err := os.WriteFile(path, jsonData, 0644); err != nil {
+		return fmt.Errorf("writing file: %w", err)
+	}
+
+	return nil
 }

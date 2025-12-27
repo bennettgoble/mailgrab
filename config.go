@@ -31,6 +31,7 @@ type Config struct {
 	Insecure   bool       `long:"insecure" description:"Disable TLS verification" env:"MAILGRAB_INSECURE" yaml:"insecure"`
 	Verbose    bool       `short:"v" long:"verbose" description:"Enable verbose output" env:"MAILGRAB_VERBOSE" yaml:"verbose"`
 	Quiet      bool       `short:"q" long:"quiet" description:"Suppress non-error output" env:"MAILGRAB_QUIET" yaml:"quiet"`
+	JSONOutput string     `short:"j" long:"json-output" description:"Path to JSON output file" env:"MAILGRAB_JSON_OUTPUT" yaml:"json_output"`
 }
 
 func (c *Config) Validate() error {
